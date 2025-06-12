@@ -1,0 +1,1 @@
+<h2>Meus Tweets</h2><?php foreach($meustweets as $t): ?><div class="card mb-3"><div class="card-body"><p><?php echo htmlspecialchars($t['texto']); ?></p><small class="text-muted"><?php echo $t['criado_em']; ?></small></div></div><?php endforeach; ?>
