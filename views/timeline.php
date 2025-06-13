@@ -15,4 +15,10 @@
             <a href="?url=tweet/<?php echo $t['id']; ?>">Ver comentários</a>
         </div>
     </div>
+
+    <div class="mt-1">
+        <a href="?url=tweet/editar/<?php echo $t['id']; ?>">Editar</a> |
+        <a href="?url=tweet/excluir/<?php echo $t['id']; ?>" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
+    </div>
+
 <?php endforeach; ?>

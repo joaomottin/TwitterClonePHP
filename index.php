@@ -47,13 +47,36 @@ switch (true) {
         (new ContatoController())->index();
         break;
 
-    //rota pra conseguir acessar a bomba do /tweet/{id}
     case preg_match('#^tweet/(\d+)$#', $url, $m) === 1:
         if (!isset($_SESSION['user_id'])) {
             header('Location: ?url=login');
             exit;
         }
         (new TweetController())->viewTweet($m[1]);
+        break;
+
+    case preg_match('#^tweet/editar/(\d+)$#', $url, $m) === 1:
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ?url=login');
+            exit;
+        }
+        (new TweetController())->editar($m[1]);
+        break;
+
+    case preg_match('#^tweet/atualizar/(\d+)$#', $url, $m) === 1:
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ?url=login');
+            exit;
+        }
+        (new TweetController())->atualizar($m[1]);
+        break;
+
+    case preg_match('#^tweet/excluir/(\d+)$#', $url, $m) === 1:
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ?url=login');
+            exit;
+        }
+        (new TweetController())->excluir($m[1]);
         break;
 
     default:
