@@ -55,4 +55,55 @@ class TweetController {
         require 'views/tweet.php';
         require 'views/partials/footer.php';
     }
+
+    public function editar($id) {
+    global $pdo;
+
+    $stmt = $pdo->prepare("SELECT * FROM tweets WHERE id = ? AND user_id = ?");
+    $stmt->execute([$id, $_SESSION['user_id']]);
+    $tweet = $stmt->fetch();
+
+    if (!$tweet) {
+        header('Location: ?url=home');
+        exit;
+    }
+
+    require 'views/partials/header.php';
+    require 'views/tweet_editar.php';
+    require 'views/partials/footer.php';
+    }
+
+        public function atualizar($id) {
+        global $pdo;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $texto = trim($_POST['texto']);
+            $stmt = $pdo->prepare("UPDATE tweets SET texto = ? WHERE id = ? AND user_id = ?");
+            $stmt->execute([$texto, $id, $_SESSION['user_id']]);
+
+            if ($stmt->rowCount() === 0) {
+                echo "Você não tem permissão para atualizar este tweet.";
+                exit;
+            }
+        }
+
+        header('Location: ?url=home');
+        exit;
+    }
+
+
+        public function excluir($id) {
+        global $pdo;
+
+        $stmt = $pdo->prepare("DELETE FROM tweets WHERE id = ? AND user_id = ?");
+        $stmt->execute([$id, $_SESSION['user_id']]);
+
+        if ($stmt->rowCount() === 0) {
+            echo "Você não tem permissão para excluir este tweet.";
+            exit;
+        }
+
+        header('Location: ?url=home');
+        exit;
+    }
 }
