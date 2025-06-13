@@ -1,24 +1,21 @@
+<link rel="stylesheet" href="css/timeline.css">
+
 <form method="POST" class="mb-4">
-    <div class="mb-3">
-        <textarea name="texto" rows="2" class="form-control" placeholder="O que está acontecendo?" required></textarea>
-    </div>
-    <button class="btn btn-primary">Tweetar</button>
+    <textarea name="texto" rows="2" class="form-control" placeholder="O que está acontecendo?" required></textarea>
+    <button class="btn btn-primary mt-2">Tweetar</button>
 </form>
 
 <?php foreach ($tweets as $t): ?>
-    <div class="card mb-3">
-        <div class="card-body">
-            <strong><?php echo htmlspecialchars($t['nome']); ?>:</strong>
-            <p><?php echo htmlspecialchars($t['texto']); ?></p>
-            <small class="text-muted"><?php echo $t['criado_em']; ?></small>
-            <br>
-            <a href="?url=tweet/<?php echo $t['id']; ?>">Ver comentários</a>
+    <div class="tweet">
+        <div class="tweet-header">
+            <strong><?php echo htmlspecialchars($t['nome']); ?></strong>
+            <small><?php echo date('d/m/Y H:i', strtotime($t['criado_em'])); ?></small>
+        </div>
+        <p class="tweet-text"><?php echo nl2br(htmlspecialchars($t['texto'])); ?></p>
+        <div class="tweet-actions">
+            <a href="?url=tweet/<?php echo $t['id']; ?>">Comentários</a> |
+            <a href="?url=tweet/editar/<?php echo $t['id']; ?>">Editar</a> |
+            <a href="?url=tweet/excluir/<?php echo $t['id']; ?>" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
         </div>
     </div>
-
-    <div class="mt-1">
-        <a href="?url=tweet/editar/<?php echo $t['id']; ?>">Editar</a> |
-        <a href="?url=tweet/excluir/<?php echo $t['id']; ?>" onclick="return confirm('Tem certeza que deseja excluir?');">Excluir</a>
-    </div>
-
 <?php endforeach; ?>

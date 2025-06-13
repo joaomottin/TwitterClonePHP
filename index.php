@@ -9,17 +9,29 @@ session_start();
 
 $url = $_GET['url'] ?? 'login';
 
+$auth = new AuthController();
+$tweet = new TweetController();
+$perfil = new PerfilController();
+$contato = new ContatoController();
+
+function precisaLogin() {
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: ?url=login');
+        exit;
+    }
+}
+
 switch (true) {
     case $url === 'login':
-        (new AuthController())->login();
+        $auth->login();
         break;
 
     case $url === 'register':
-        (new AuthController())->register();
+        $auth->register();
         break;
 
     case $url === 'recover':
-        (new AuthController())->recover();
+        $auth->recover();
         break;
 
     case $url === 'logout':
@@ -28,57 +40,40 @@ switch (true) {
         exit;
 
     case $url === 'home':
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new TweetController())->timeline();
+        precisaLogin();
+        $tweet->timeline();
         break;
 
     case $url === 'perfil':
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new PerfilController())->index();
+        precisaLogin();
+        $perfil->index();
         break;
 
     case $url === 'contato':
-        (new ContatoController())->index();
+        $contato->index();
         break;
 
-    case preg_match('#^tweet/(\d+)$#', $url, $m) === 1:
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new TweetController())->viewTweet($m[1]);
+    case preg_match('#^tweet/(\d+)$#', $url, $m):
+        precisaLogin();
+        $tweet->viewTweet($m[1]);
         break;
 
-    case preg_match('#^tweet/editar/(\d+)$#', $url, $m) === 1:
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new TweetController())->editar($m[1]);
+    case preg_match('#^tweet/editar/(\d+)$#', $url, $m):
+        precisaLogin();
+        $tweet->editar($m[1]);
         break;
 
-    case preg_match('#^tweet/atualizar/(\d+)$#', $url, $m) === 1:
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new TweetController())->atualizar($m[1]);
+    case preg_match('#^tweet/atualizar/(\d+)$#', $url, $m):
+        precisaLogin();
+        $tweet->atualizar($m[1]);
         break;
 
-    case preg_match('#^tweet/excluir/(\d+)$#', $url, $m) === 1:
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: ?url=login');
-            exit;
-        }
-        (new TweetController())->excluir($m[1]);
+    case preg_match('#^tweet/excluir/(\d+)$#', $url, $m):
+        precisaLogin();
+        $tweet->excluir($m[1]);
         break;
 
     default:
-        echo '404 Página não encontrada';
+        $auth->login();
+        break;
 }
