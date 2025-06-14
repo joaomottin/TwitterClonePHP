@@ -1,3 +1,6 @@
+<!--UTILIZE APENAS CASO NÃO CONSIGA REALIZAR O UPLOAD DO ARQUIVO "twitterclone.sql", ESSA É APENAS UMA VERSÃO DE TESTE.-->
+<!-- Para utilizar esse código, acesse http://localhost/TwitterClonePHP/script.php-->
+
 <?php
 $dsn = "mysql:host=localhost;port=3306;charset=utf8";
 $user = "root"; $pass = "";

@@ -1,5 +1,6 @@
 <?php
 require 'config/config.php';
+require 'csrf/CsrfHelper.php';
 require 'controllers/AuthController.php';
 require 'controllers/TweetController.php';
 require 'controllers/PerfilController.php';
