@@ -1,192 +1,102 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Tempo de geração: 14/06/2025 às 02:03
--- Versão do servidor: 10.4.32-MariaDB
--- Versão do PHP: 8.2.12
+-- versão corrigida para evitar erros de FK
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
 -- Banco de dados: `twitterclone`
---
 
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `comentarios`
---
-
-CREATE TABLE `comentarios` (
-  `id` int(11) NOT NULL,
-  `tweet_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `texto` text NOT NULL,
-  `criado_em` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Despejando dados para a tabela `comentarios`
---
-
-INSERT INTO `comentarios` (`id`, `tweet_id`, `user_id`, `texto`, `criado_em`) VALUES
-(1, 2, 2, 'Olá!!\r\n', '2025-06-13 20:48:59'),
-(2, 2, 1, 'Pois é!', '2025-06-13 20:51:20');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `contatos`
---
-
-CREATE TABLE `contatos` (
-  `id` int(11) NOT NULL,
-  `nome` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `assunto` varchar(100) NOT NULL,
-  `mensagem` text NOT NULL,
-  `data_envio` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Despejando dados para a tabela `contatos`
---
-
-INSERT INTO `contatos` (`id`, `nome`, `email`, `assunto`, `mensagem`, `data_envio`) VALUES
-(1, 'Kauan Lima', 'kauanlima@gmail.com', 'Teste', 'Testando V1', '2025-06-13 20:49:27');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `tweets`
---
-
-CREATE TABLE `tweets` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `texto` text NOT NULL,
-  `criado_em` datetime DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-
---
--- Despejando dados para a tabela `tweets`
---
-
-INSERT INTO `tweets` (`id`, `user_id`, `texto`, `criado_em`) VALUES
-(1, 1, 'Primeiro tweet!', '2025-06-13 20:26:38'),
-(2, 1, 'Salve', '2025-06-13 20:39:41');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `users`
---
-
+-- Tabela `users`
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `senha` varchar(255) NOT NULL,
   `cpf` varchar(14) NOT NULL,
-  `data_nascimento` date NOT NULL
+  `data_nascimento` date NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
---
--- Despejando dados para a tabela `users`
---
+-- Tabela `tweets`
+CREATE TABLE `tweets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `texto` text NOT NULL,
+  `criado_em` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Tabela `comentarios`
+CREATE TABLE `comentarios` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `tweet_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `texto` text NOT NULL,
+  `criado_em` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `tweet_id` (`tweet_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Tabela `likes`
+CREATE TABLE `likes` (
+  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `tweet_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
+  `criado_em` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_like (tweet_id, user_id),
+  KEY `tweet_id` (`tweet_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Tabela `contatos`
+CREATE TABLE `contatos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `assunto` varchar(100) NOT NULL,
+  `mensagem` text NOT NULL,
+  `data_envio` datetime DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+
+-- Inserção de dados
 
 INSERT INTO `users` (`id`, `nome`, `email`, `senha`, `cpf`, `data_nascimento`) VALUES
 (1, 'João Pedro', 'joao@gmail.com', '$2y$10$GhnCz952mEfI.dOPK6BNu.nZs2dql5eSX4JYx1HFaUIB6QDic7l.O', '123.456.789-00', '2000-01-01'),
 (2, 'Kauan Lima Ferreira', 'kauanlima@gmail.com', '$2y$10$kbWy2.2w.3WEYVKvPsuZautvLZ3F8IxjXdIhrCFEUkAv/pCHofV2i', '097.249.133-39', '2006-07-31');
 
---
--- Índices para tabelas despejadas
---
+INSERT INTO `tweets` (`id`, `user_id`, `texto`) VALUES
+(1, 1, 'Primeiro tweet!'),
+(2, 1, 'Salve!'),
+(3, 2, 'Olá, que tal nos followarmos?');
 
---
--- Índices de tabela `comentarios`
---
-ALTER TABLE `comentarios`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `tweet_id` (`tweet_id`),
-  ADD KEY `user_id` (`user_id`);
+INSERT INTO `comentarios` (`id`, `tweet_id`, `user_id`, `texto`) VALUES
+(1, 2, 2, 'Olá!!'),
+(2, 2, 1, 'Pois é!');
 
---
--- Índices de tabela `contatos`
---
-ALTER TABLE `contatos`
-  ADD PRIMARY KEY (`id`);
+INSERT INTO `likes` (`id`, `tweet_id`, `user_id`) VALUES
+(1, 1, 2),
+(2, 2, 1),
+(3, 3, 1);
 
---
--- Índices de tabela `tweets`
---
+INSERT INTO `contatos` (`id`, `nome`, `email`, `assunto`, `mensagem`) VALUES
+(1, 'Kauan Lima', 'kauanlima@gmail.com', 'Teste!', 'Testando V1');
+
+-- Foreign Keys (após PKs e índices)
+
 ALTER TABLE `tweets`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD CONSTRAINT `tweets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Índices de tabela `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- AUTO_INCREMENT para tabelas despejadas
---
-
---
--- AUTO_INCREMENT de tabela `comentarios`
---
-ALTER TABLE `comentarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de tabela `contatos`
---
-ALTER TABLE `contatos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT de tabela `tweets`
---
-ALTER TABLE `tweets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de tabela `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `comentarios`
---
 ALTER TABLE `comentarios`
   ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
---
--- Restrições para tabelas `tweets`
---
-ALTER TABLE `tweets`
-  ADD CONSTRAINT `tweets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
-COMMIT;
+ALTER TABLE `likes`
+  ADD CONSTRAINT `likes_ibfk_1` FOREIGN KEY (`tweet_id`) REFERENCES `tweets` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `likes_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+COMMIT;

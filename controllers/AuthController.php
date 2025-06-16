@@ -14,7 +14,7 @@ class AuthController {
             $pdo = Conexao::getConexao();
 
             $stmt = $pdo->prepare('SELECT * FROM users WHERE email = ? LIMIT 1');
-            $stmt->execute([$_POST['email']]);
+            $email = $_POST['email'] ?? null;
 
             $u = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($u && password_verify($_POST['senha'], $u['senha'])) {

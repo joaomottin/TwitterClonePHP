@@ -7,6 +7,7 @@ require_once __DIR__ . '/../models/Comentario.php';
 
 class TweetController {
 
+    // Página inicial / timeline: mostra todos tweets + cria tweet novo (POST)
     public function timeline()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,19 +50,22 @@ class TweetController {
         $comentarioModel = new Comentario(Conexao::getConexao());
         $comentarios = $comentarioModel->findByTweetId($id);
 
+        // Para verificar se o usuário já curtiu
+        $userLiked = $tweetModel->userLikedTweet($id, $_SESSION['user_id']);
+
         require 'views/partials/header.php';
         require 'views/tweet.php';
         require 'views/partials/footer.php';
     }
 
-
+    // Formulário para editar tweet
     public function editar($id)
     {
         $tweetModel = new Tweet(Conexao::getConexao());
         $tweet = $tweetModel->findByIdAndUser($id, $_SESSION['user_id']);
 
         if (!$tweet) {
-            header('Location: ?url=home'); 
+            header('Location: ?url=home');
             exit;
         }
 
@@ -70,6 +74,7 @@ class TweetController {
         require 'views/partials/footer.php';
     }
 
+    // Atualizar tweet via POST
     public function atualizar($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -77,7 +82,12 @@ class TweetController {
                 die('Invalid CSRF Token');
             }
 
-            $texto = trim($_POST['texto']);
+            $texto = trim($_POST['texto'] ?? '');
+            if ($texto === '') {
+                echo "Texto não pode ser vazio.";
+                exit;
+            }
+
             $tweetModel = new Tweet(Conexao::getConexao());
             $rowCount = $tweetModel->update($id, $_SESSION['user_id'], $texto);
 
@@ -87,10 +97,11 @@ class TweetController {
             }
         }
 
-        header('Location: ?url=home'); 
+        header('Location: ?url=home');
         exit;
     }
 
+    // Excluir tweet
     public function excluir($id)
     {
         $tweetModel = new Tweet(Conexao::getConexao());
@@ -101,7 +112,7 @@ class TweetController {
             exit;
         }
 
-        header('Location: ?url=home'); 
+        header('Location: ?url=home');
         exit;
     }
 }
