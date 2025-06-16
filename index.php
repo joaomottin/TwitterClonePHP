@@ -55,6 +55,16 @@ switch (true) {
         $perfil->index();
         break;
 
+    case $url === 'perfil/atualizar':
+        precisaLogin();
+        $perfil->atualizar();
+        break;
+
+    case $url === 'perfil/excluir':
+        precisaLogin();
+        $perfil->excluir();
+        break;
+
     case $url === 'contato':
         $contato->index();
         break;
