@@ -10,7 +10,6 @@ class Like {
     }
 
     public function create($tweetId, $userId) {
-        // Previne likes duplicados
         if ($this->exists($tweetId, $userId)) {
             return false;
         }

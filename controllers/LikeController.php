@@ -8,19 +8,16 @@ class LikeController {
     public function toggleLike($tweetId) {
         session_start();
 
-        // Verifica se o usuário está logado
         if (!isset($_SESSION['user_id'])) {
             header('Location: ?url=login');
             exit;
         }
 
-        // Verifica método POST
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: ?url=tweet/' . $tweetId);
             exit;
         }
 
-        // Valida o token CSRF
         if (!isset($_POST['csrf_token']) || !CsrfHelper::validateToken($_POST['csrf_token'])) {
             die('Erro: Token CSRF inválido.');
         }

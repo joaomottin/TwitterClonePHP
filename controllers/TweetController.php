@@ -7,7 +7,6 @@ require_once __DIR__ . '/../models/Comentario.php';
 
 class TweetController {
 
-    // Página inicial / timeline: mostra todos tweets + cria tweet novo (POST)
     public function timeline()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -50,7 +49,6 @@ class TweetController {
         $comentarioModel = new Comentario(Conexao::getConexao());
         $comentarios = $comentarioModel->findByTweetId($id);
 
-        // Para verificar se o usuário já curtiu
         $userLiked = $tweetModel->userLikedTweet($id, $_SESSION['user_id']);
 
         require 'views/partials/header.php';
@@ -58,7 +56,6 @@ class TweetController {
         require 'views/partials/footer.php';
     }
 
-    // Formulário para editar tweet
     public function editar($id)
     {
         $tweetModel = new Tweet(Conexao::getConexao());
@@ -74,7 +71,6 @@ class TweetController {
         require 'views/partials/footer.php';
     }
 
-    // Atualizar tweet via POST
     public function atualizar($id)
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -101,7 +97,6 @@ class TweetController {
         exit;
     }
 
-    // Excluir tweet
     public function excluir($id)
     {
         $tweetModel = new Tweet(Conexao::getConexao());
