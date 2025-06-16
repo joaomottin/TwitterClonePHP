@@ -14,9 +14,6 @@ class ComentarioController {
     }
 
     public function editar($id) {
-        session_start();
-        $this->precisaLogin();
-
         $comentarioModel = new Comentario(Conexao::getConexao());
         $comentario = $comentarioModel->findByIdAndUser($id, $_SESSION['user_id']);
 
