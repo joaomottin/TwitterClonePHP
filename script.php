@@ -61,7 +61,7 @@ try {
 
     // Inserir dados
     $senha1 = password_hash('123456', PASSWORD_DEFAULT);
-    $senha2 = password_hash('654321', PASSWORD_DEFAULT);
+    $senha2 = password_hash('senha123', PASSWORD_DEFAULT);
 
     $pdo->exec("INSERT INTO users (id, nome, email, senha, cpf, data_nascimento) VALUES
         (1, 'João Pedro', 'joao@gmail.com', '$senha1', '123.456.789-00', '2000-01-01'),
