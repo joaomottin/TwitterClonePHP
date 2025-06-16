@@ -21,7 +21,7 @@
 <?php endforeach; ?>
 
 <form method="POST" class="mt-4">
-    <div class="mb-3">
+    <input type="hidden" name="csrf_token" value="<?php echo CsrfHelper::generateToken(); ?>">    <div class="mb-3">
         <textarea name="comentario" class="form-control" placeholder="Adicionar comentário..." required></textarea>
     </div>
     <button type="submit" class="btn btn-primary">Comentar</button>

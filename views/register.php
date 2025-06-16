@@ -12,7 +12,7 @@
             <?php endif; ?>
 
             <form method="POST">
-                <div class="mb-3">
+    <input type="hidden" name="csrf_token" value="<?php echo CsrfHelper::generateToken(); ?>">                <div class="mb-3">
                     <label class="form-label">Nome</label>
                     <input type="text" name="nome" class="form-control" required>
                 </div>

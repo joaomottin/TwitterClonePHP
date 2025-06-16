@@ -1,14 +1,27 @@
 <?php
+
+require_once __DIR__ . "/../config/db.php";
+
 class TweetController {
 
-    public function timeline() {
-        global $pdo;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['texto'])) {
+    public function timeline()
+    {
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!CsrfHelper::validateToken($_POST['csrf_token'])) {
+                die('Invalid CSRF Token');
+            }
+
+            $pdo = Conexao::getConexao();
+
             $stmt = $pdo->prepare('INSERT INTO tweets(user_id, texto) VALUES (?, ?)');
             $stmt->execute([$_SESSION['user_id'], $_POST['texto']]);
-            header('Location:?url=home');
+
+            header('Location:?url=home'); 
             exit;
         }
+
+        $pdo = Conexao::getConexao();
 
         $stmt = $pdo->query('
             SELECT t.id, t.texto, u.nome, t.criado_em 
@@ -23,14 +36,24 @@ class TweetController {
         require 'views/partials/footer.php';
     }
 
-    public function viewTweet($id) {
-        global $pdo;
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['comentario'])) {
+    public function viewTweet($id)
+    {
+        $error = '';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!CsrfHelper::validateToken($_POST['csrf_token'])) {
+                die('Invalid CSRF Token');
+            }
+
+            $pdo = Conexao::getConexao();
+
             $stmt = $pdo->prepare('INSERT INTO comentarios(tweet_id, user_id, texto) VALUES (?, ?, ?)');
             $stmt->execute([$id, $_SESSION['user_id'], $_POST['comentario']]);
+
             header('Location:?url=tweet/' . $id);
             exit;
         }
+
+        $pdo = Conexao::getConexao();
 
         $stmt = $pdo->prepare('
             SELECT t.texto, u.nome, t.criado_em 
@@ -56,27 +79,34 @@ class TweetController {
         require 'views/partials/footer.php';
     }
 
-    public function editar($id) {
-    global $pdo;
+    public function editar($id)
+    {
+        $pdo = Conexao::getConexao();
 
-    $stmt = $pdo->prepare("SELECT * FROM tweets WHERE id = ? AND user_id = ?");
-    $stmt->execute([$id, $_SESSION['user_id']]);
-    $tweet = $stmt->fetch();
+        $stmt = $pdo->prepare("SELECT * FROM tweets WHERE id = ? AND user_id = ?");
+        $stmt->execute([$id, $_SESSION['user_id']]);
 
-    if (!$tweet) {
-        header('Location: ?url=home');
-        exit;
+        $tweet = $stmt->fetch();
+
+        if (!$tweet) {
+            header('Location: ?url=home'); 
+            exit;
+        }
+
+        require 'views/partials/header.php';
+        require 'views/tweet_editar.php';
+        require 'views/partials/footer.php';
     }
 
-    require 'views/partials/header.php';
-    require 'views/tweet_editar.php';
-    require 'views/partials/footer.php';
-    }
-
-        public function atualizar($id) {
-        global $pdo;
-
+    public function atualizar($id)
+    {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!CsrfHelper::validateToken($_POST['csrf_token'])) {
+                die('Invalid CSRF Token');
+            }
+
+            $pdo = Conexao::getConexao();
+
             $texto = trim($_POST['texto']);
             $stmt = $pdo->prepare("UPDATE tweets SET texto = ? WHERE id = ? AND user_id = ?");
             $stmt->execute([$texto, $id, $_SESSION['user_id']]);
@@ -87,13 +117,13 @@ class TweetController {
             }
         }
 
-        header('Location: ?url=home');
+        header('Location: ?url=home'); 
         exit;
     }
 
-
-        public function excluir($id) {
-        global $pdo;
+    public function excluir($id)
+    {
+        $pdo = Conexao::getConexao();
 
         $stmt = $pdo->prepare("DELETE FROM tweets WHERE id = ? AND user_id = ?");
         $stmt->execute([$id, $_SESSION['user_id']]);
@@ -103,7 +133,8 @@ class TweetController {
             exit;
         }
 
-        header('Location: ?url=home');
+        header('Location: ?url=home'); 
         exit;
     }
 }
+
