@@ -1,8 +1,8 @@
 
 # 🐦 TwitterClonePHP
 
-Clone simples do Twitter em PHP com PDO e MySQL, usando MVC.  
-Cadastre-se, faça login e publique seus tweets rapidinho! 🚀
+Clone simples do Twitter em PHP com MySQL, usando a estrutura MVC.  
+Cadastre-se, faça login e publique seus tweets! 🚀
 
 ---
 
@@ -18,10 +18,9 @@ Cadastre-se, faça login e publique seus tweets rapidinho! 🚀
 
 ## 🛠 Tecnologias
 
-- PHP 8+  
+- PHP  
+- HTML & CSS
 - MySQL  
-- PDO  
-- HTML / CSS / JS
 
 ---
 
@@ -34,7 +33,8 @@ Cadastre-se, faça login e publique seus tweets rapidinho! 🚀
 
 2. Crie o banco MySQL e importe o script de tabelas.  
 3. Configure `config/db.php` com suas credenciais.  
-4. Acesse no navegador: `http://localhost/TwitterClonePHP/public`
+4. Exporte ou crie o banco de dados com colando no navegador `http://localhost/TwitterClonePHP/script.php`
+4. Acesse no navegador: `http://localhost/TwitterClonePHP/`
 
 ---
 
@@ -45,8 +45,4 @@ Sugestões e melhorias são super bem-vindas! 💡
 
 ---
 
-Feito por João Mottin — [GitHub](https://github.com/joaomottin) ✌️
-
----
-
-Quer algo mais elaborado? Só avisar!
+Feito por João P. Mottin — [GitHub](https://github.com/joaomottin) ✌️
