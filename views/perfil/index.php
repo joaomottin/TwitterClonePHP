@@ -23,7 +23,7 @@
             </div>
         <?php endforeach; ?>
     <?php endif; ?>
-    
+
 <h2 class="perfil-title">Dados do Usuário</h2>
 
 <form action="?url=perfil/atualizar" method="post" class="perfil-form">

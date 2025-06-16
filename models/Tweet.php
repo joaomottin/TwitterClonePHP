@@ -22,7 +22,7 @@ class Tweet {
     public function findById($id) {
         $stmt = $this->db->prepare('
             SELECT t.id, t.texto, u.nome, t.criado_em,
-                   (SELECT COUNT(*) FROM likes WHERE tweet_id = t.id) AS likes_count
+            (SELECT COUNT(*) FROM likes WHERE tweet_id = t.id) AS likes_count
             FROM tweets t 
             JOIN users u ON u.id = t.user_id 
             WHERE t.id = ?

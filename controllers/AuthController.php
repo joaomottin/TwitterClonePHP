@@ -18,7 +18,7 @@ class AuthController {
                         $error = '';
                     } else {
                         $stmt->execute([$email]);
-                                    $u = $stmt->fetch(PDO::FETCH_ASSOC);
+                        $u = $stmt->fetch(PDO::FETCH_ASSOC);
                 if ($u && password_verify($_POST['senha'], $u['senha'])) {
                     $_SESSION['user_id'] = $u['id'];
                     $_SESSION['user_nome'] = $u['nome'];
