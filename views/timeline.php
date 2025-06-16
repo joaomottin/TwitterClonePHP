@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="css/timeline.css">
 
 <form method="POST" class="mb-4">
+    <input type="hidden" name="csrf_token" value="<?= CsrfHelper::generateToken() ?>">
     <textarea name="texto" rows="2" class="form-control" placeholder="O que está acontecendo?" required></textarea>
     <button class="btn btn-primary mt-2">Tweetar</button>
 </form>

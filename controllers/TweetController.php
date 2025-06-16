@@ -1,35 +1,28 @@
 <?php
 
-require_once __DIR__ . "/../config/db.php";
+require_once __DIR__ . '/../models/Tweet.php';
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../csrf/CsrfHelper.php';
+require_once __DIR__ . '/../models/Comentario.php';
 
 class TweetController {
 
     public function timeline()
     {
-        $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!CsrfHelper::validateToken($_POST['csrf_token'])) {
                 die('Invalid CSRF Token');
             }
 
-            $pdo = Conexao::getConexao();
-
-            $stmt = $pdo->prepare('INSERT INTO tweets(user_id, texto) VALUES (?, ?)');
-            $stmt->execute([$_SESSION['user_id'], $_POST['texto']]);
+            $tweetModel = new Tweet(Conexao::getConexao());
+            $tweetModel->create($_SESSION['user_id'], $_POST['texto']);
 
             header('Location:?url=home'); 
             exit;
         }
 
-        $pdo = Conexao::getConexao();
-
-        $stmt = $pdo->query('
-            SELECT t.id, t.texto, u.nome, t.criado_em 
-            FROM tweets t 
-            JOIN users u ON u.id = t.user_id 
-            ORDER BY t.id DESC
-        ');
-        $tweets = $stmt->fetchAll();
+        $tweetModel = new Tweet(Conexao::getConexao());
+        $tweets = $tweetModel->getAllWithUser();
 
         require 'views/partials/header.php';
         require 'views/timeline.php';
@@ -38,55 +31,34 @@ class TweetController {
 
     public function viewTweet($id)
     {
-        $error = '';
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!CsrfHelper::validateToken($_POST['csrf_token'])) {
                 die('Invalid CSRF Token');
             }
 
-            $pdo = Conexao::getConexao();
-
-            $stmt = $pdo->prepare('INSERT INTO comentarios(tweet_id, user_id, texto) VALUES (?, ?, ?)');
-            $stmt->execute([$id, $_SESSION['user_id'], $_POST['comentario']]);
+            $comentarioModel = new Comentario(Conexao::getConexao());
+            $comentarioModel->create($id, $_SESSION['user_id'], $_POST['comentario']);
 
             header('Location:?url=tweet/' . $id);
             exit;
         }
 
-        $pdo = Conexao::getConexao();
+        $tweetModel = new Tweet(Conexao::getConexao());
+        $tweet = $tweetModel->findById($id);
 
-        $stmt = $pdo->prepare('
-            SELECT t.texto, u.nome, t.criado_em 
-            FROM tweets t 
-            JOIN users u ON u.id = t.user_id 
-            WHERE t.id = ?
-        ');
-        $stmt->execute([$id]);
-        $tweet = $stmt->fetch();
-
-        $stmt = $pdo->prepare('
-            SELECT c.texto, u.nome, c.criado_em 
-            FROM comentarios c 
-            JOIN users u ON u.id = c.user_id 
-            WHERE c.tweet_id = ? 
-            ORDER BY c.id
-        ');
-        $stmt->execute([$id]);
-        $comentarios = $stmt->fetchAll();
+        $comentarioModel = new Comentario(Conexao::getConexao());
+        $comentarios = $comentarioModel->findByTweetId($id);
 
         require 'views/partials/header.php';
         require 'views/tweet.php';
         require 'views/partials/footer.php';
     }
 
+
     public function editar($id)
     {
-        $pdo = Conexao::getConexao();
-
-        $stmt = $pdo->prepare("SELECT * FROM tweets WHERE id = ? AND user_id = ?");
-        $stmt->execute([$id, $_SESSION['user_id']]);
-
-        $tweet = $stmt->fetch();
+        $tweetModel = new Tweet(Conexao::getConexao());
+        $tweet = $tweetModel->findByIdAndUser($id, $_SESSION['user_id']);
 
         if (!$tweet) {
             header('Location: ?url=home'); 
@@ -105,13 +77,11 @@ class TweetController {
                 die('Invalid CSRF Token');
             }
 
-            $pdo = Conexao::getConexao();
-
             $texto = trim($_POST['texto']);
-            $stmt = $pdo->prepare("UPDATE tweets SET texto = ? WHERE id = ? AND user_id = ?");
-            $stmt->execute([$texto, $id, $_SESSION['user_id']]);
+            $tweetModel = new Tweet(Conexao::getConexao());
+            $rowCount = $tweetModel->update($id, $_SESSION['user_id'], $texto);
 
-            if ($stmt->rowCount() === 0) {
+            if ($rowCount === 0) {
                 echo "Você não tem permissão para atualizar este tweet.";
                 exit;
             }
@@ -123,12 +93,10 @@ class TweetController {
 
     public function excluir($id)
     {
-        $pdo = Conexao::getConexao();
+        $tweetModel = new Tweet(Conexao::getConexao());
+        $rowCount = $tweetModel->delete($id, $_SESSION['user_id']);
 
-        $stmt = $pdo->prepare("DELETE FROM tweets WHERE id = ? AND user_id = ?");
-        $stmt->execute([$id, $_SESSION['user_id']]);
-
-        if ($stmt->rowCount() === 0) {
+        if ($rowCount === 0) {
             echo "Você não tem permissão para excluir este tweet.";
             exit;
         }
@@ -137,4 +105,3 @@ class TweetController {
         exit;
     }
 }
-

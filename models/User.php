@@ -15,7 +15,5 @@ class User {
 
         return $stmt->fetch();
     }
-
-    // Outros métodos serão acrescentados conforme a necessidade
 }
 
