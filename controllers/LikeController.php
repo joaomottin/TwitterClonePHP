@@ -1,10 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../csrf/CsrfHelper.php';
+require_once __DIR__ . '/../models/Like.php';
 
 class LikeController {
-
     public function toggleLike($tweetId) {
         session_start();
 
@@ -24,17 +22,12 @@ class LikeController {
 
         $db = Conexao::getConexao();
         $userId = $_SESSION['user_id'];
+        $like = new Like($db);
 
-        $stmt = $db->prepare('SELECT * FROM likes WHERE tweet_id = ? AND user_id = ?');
-        $stmt->execute([$tweetId, $userId]);
-        $like = $stmt->fetch();
-
-        if ($like) {
-            $stmt = $db->prepare('DELETE FROM likes WHERE tweet_id = ? AND user_id = ?');
-            $stmt->execute([$tweetId, $userId]);
+        if ($like->exists($tweetId, $userId)) {
+            $like->delete($tweetId, $userId);
         } else {
-            $stmt = $db->prepare('INSERT INTO likes (tweet_id, user_id) VALUES (?, ?)');
-            $stmt->execute([$tweetId, $userId]);
+            $like->create($tweetId, $userId);
         }
 
         header('Location: ?url=tweet/' . $tweetId);

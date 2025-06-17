@@ -1,9 +1,9 @@
 <?php
 
 require_once __DIR__ . '/../models/Tweet.php';
+require_once __DIR__ . '/../models/Comentario.php';
 require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../csrf/CsrfHelper.php';
-require_once __DIR__ . '/../models/Comentario.php';
 
 class TweetController {
 
